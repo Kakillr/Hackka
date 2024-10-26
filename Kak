@@ -1,0 +1,163 @@
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local ScriptBox = Instance.new("TextBox")
+local RunButton = Instance.new("TextButton")
+local ClearButton = Instance.new("TextButton")
+local MainMenuButton = Instance.new("TextButton")
+local InfoButton = Instance.new("TextButton")
+local ScriptsButton = Instance.new("TextButton")
+local HideButton = Instance.new("TextButton")
+local ResizeButton = Instance.new("TextButton")
+local MiniFrame = Instance.new("Frame")
+local InfoLabel = Instance.new("TextLabel")
+
+-- إعداد واجهة المستخدم
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- إعداد الإطار الرئيسي
+MainFrame.Parent = ScreenGui
+MainFrame.Size = UDim2.new(0.6, 0, 0.5, 0)
+MainFrame.Position = UDim2.new(0.2, 0, 0.25, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+
+-- إعداد صندوق النص
+ScriptBox.Parent = MainFrame
+ScriptBox.Size = UDim2.new(0.6, 0, 0.4, 0)
+ScriptBox.Position = UDim2.new(0.05, 0, 0.1, 0)
+ScriptBox.PlaceholderText = "اكتب سكربت Lua هنا"
+ScriptBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ScriptBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+ScriptBox.BorderColor3 = Color3.fromRGB(0, 0, 255)
+
+-- الأزرار الجانبية
+local buttons = {MainMenuButton, InfoButton, ScriptsButton}
+local buttonTexts = {"القائمة الرئيسية", "المعلومات", "السكربتات"}
+for i, button in ipairs(buttons) do
+    button.Parent = MainFrame
+    button.Size = UDim2.new(0.25, 0, 0.1, 0)
+    button.Position = UDim2.new(0.7, 0, 0.1 * (i - 1) + 0.1, 0)
+    button.Text = buttonTexts[i]
+    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.BorderColor3 = Color3.fromRGB(0, 0, 255)
+end
+
+-- زر التشغيل
+RunButton.Parent = MainFrame
+RunButton.Size = UDim2.new(0.3, 0, 0.1, 0)
+RunButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+RunButton.Text = "تشغيل"
+RunButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+RunButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+RunButton.BorderColor3 = Color3.fromRGB(0, 0, 255)
+
+-- زر حذف الكود
+ClearButton.Parent = MainFrame
+ClearButton.Size = UDim2.new(0.3, 0, 0.1, 0)
+ClearButton.Position = UDim2.new(0.5, 0, 0.6, 0)
+ClearButton.Text = "حذف الكود"
+ClearButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ClearButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ClearButton.BorderColor3 = Color3.fromRGB(0, 0, 255)
+
+-- إعداد زر الإخفاء
+HideButton.Parent = MainFrame
+HideButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+HideButton.Position = UDim2.new(0.9, -5, 0, 5)
+HideButton.Text = "X"
+HideButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+HideButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- إعداد زر تغيير الحجم
+ResizeButton.Parent = MainFrame
+ResizeButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+ResizeButton.Position = UDim2.new(0.9, -5, 0.9, -5)
+ResizeButton.Text = "⇔"
+ResizeButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
+ResizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- إعداد المربع الصغير للإظهار
+MiniFrame.Parent = ScreenGui
+MiniFrame.Size = UDim2.new(0.1, 0, 0.1, 0)
+MiniFrame.Position = UDim2.new(0, 10, 0, 10)
+MiniFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MiniFrame.Visible = false
+
+local ShowButton = Instance.new("TextButton")
+ShowButton.Parent = MiniFrame
+ShowButton.Size = UDim2.new(1, 0, 1, 0)
+ShowButton.Text = "◄"
+ShowButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ShowButton.BackgroundTransparency = 1
+
+-- إضافة عنصر لعرض المعلومات
+InfoLabel.Parent = MainFrame
+InfoLabel.Size = UDim2.new(0.6, 0, 0.4, 0)
+InfoLabel.Position = UDim2.new(0.05, 0, 0.1, 0)
+InfoLabel.BackgroundTransparency = 1
+InfoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+InfoLabel.Visible = false  -- إخفاء في البداية
+
+-- إعدادات الرسوميات
+local TweenService = game:GetService("TweenService")
+local hideTween = TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Sine), {Position = UDim2.new(0.25, 0, 1, 0)})
+local showTween = TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Sine), {Position = UDim2.new(0.25, 0, 0.25, 0)})
+
+-- وظيفة زر الإخفاء
+HideButton.MouseButton1Click:Connect(function()
+    hideTween:Play()
+    hideTween.Completed:Connect(function()
+        MainFrame.Visible = false
+        MiniFrame.Visible = true
+    end)
+end)
+
+-- وظيفة زر الإظهار
+ShowButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = true
+    showTween:Play()
+    MiniFrame.Visible = false
+end)
+
+-- وظيفة زر التشغيل
+RunButton.MouseButton1Click:Connect(function()
+    local scriptCode = ScriptBox.Text
+    loadstring(scriptCode)()  -- تشغيل السكربت
+end)
+
+-- وظيفة زر حذف الكود
+ClearButton.MouseButton1Click:Connect(function()
+    ScriptBox.Text = ""  -- مسح النص
+end)
+
+-- تغيير محتوى الواجهة عند الضغط على الأزرار
+MainMenuButton.MouseButton1Click:Connect(function()
+    ScriptBox.Visible = true
+    InfoLabel.Visible = false
+end)
+
+InfoButton.MouseButton1Click:Connect(function()
+    ScriptBox.Visible = false
+    InfoLabel.Visible = true
+    InfoLabel.Text = "اسم اللاعب: " .. game.Players.LocalPlayer.Name .. "\n" ..
+                     "عدد الفريمات: " .. tostring(workspace:GetRealPhysicsFPS()) .. "\n" ..
+                     "البنك: " .. tostring(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()) .. "\n" ..
+                     "المطور: KA_KILLR"
+end)
+
+-- وظيفة تغيير الحجم باستخدام السحب
+local resizing = false
+ResizeButton.MouseButton1Down:Connect(function()
+    resizing = true
+end)
+
+ResizeButton.MouseButton1Up:Connect(function()
+    resizing = false
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - ResizeButton.AbsolutePosition
+        MainFrame.Size = UDim2.new(0, delta.X, 0, delta.Y)
+    end
+end)
